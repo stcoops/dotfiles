@@ -10,7 +10,7 @@ Keep source files in this repo and symlink or install them to $HOME so configs c
 ```bash
 git clone https://github.com/stcoops/dotfiles.git ~/dotfiles
 ```
-2. Use GNU Stow (see [GNU Stow](https://www.gnu.org/software/stow/)):
+2. Use Stow (recommended, see [GNU Stow](https://www.gnu.org/software/stow/) for more):
 ```bash
 # Debian/Ubuntu
 sudo apt install stow
