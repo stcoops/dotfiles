@@ -3,4 +3,4 @@
 .config/Code
 .config/go
 .config/dconf
-
+.config/qtile/__pycache__

@@ -16,12 +16,18 @@ from libqtile.lazy import lazy
 # Keybindings #
 ###############
 
+def _reload_qtile(qtile):
+    qtile.reload_config()
+    qtile.spawn("bash home/solve/.config/qtile/reloadpicom.sh")
+
+
 class KeyBindings:
 
-    def __init__(self, mod, terminal, browser=None, screen_count=1):
+    def __init__(self, mod, terminal, editor=None, browser=None, screen_count=1):
         self.mod = mod
         self.terminal = terminal
         self.browser = browser
+        self.editor = editor
         self.keys = []
         self._base_keys()
         self._multi_media_keys()
@@ -29,6 +35,8 @@ class KeyBindings:
             self._multi_screen_keys(screen_count)
         if self.browser:
             self._browser_key()
+        if self.editor:
+            self._file_editor()
 
     def _base_keys(self):
         self.keys.extend([
@@ -49,7 +57,7 @@ class KeyBindings:
             Key([self.mod], "f", lazy.window.toggle_fullscreen(), desc="Toggle fullscreen on the focused window"),
 
 
-            Key([self.mod, "shift"], "home", lazy.reload_config(), desc="Reload the config"),
+            Key([self.mod, "shift"], "home", lazy.function(_reload_qtile), desc="Reload the config"),
             Key([self.mod, "shift"], "end", lazy.shutdown(), desc="Shutdown Qtile"),
 
             Key([self.mod], "space", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
@@ -78,8 +86,18 @@ class KeyBindings:
 
     def _browser_key(self):
         self.keys.append(
-            Key([self.mod], "q", lazy.spawn(self.browser), desc="Launch web browser"),
-        )
+            Key([self.mod], "b", lazy.spawn(self.browser), desc="Launch web browser"),
+            )
+    
+    def _file_editor(self):
+        if self.editor == "nvim":
+            editor = "kitty -e nvim"
+        else:
+            editor = self.editor
+
+        self.keys.append(
+            Key([self.mod], "v", lazy.spawn(editor), desc="Launch file editor")
+            )
 
 #######################
 # Group functionality #
@@ -96,7 +114,7 @@ def split_array(arr, B):
         start = end
     return parts
 
-def _focus_group(qtile, screen_index, group_name):
+def _focus_group_and_screen(qtile, screen_index, group_name):
     qtile.focus_screen(screen_index)
     qtile.groups_map[group_name].toscreen()
 
@@ -125,7 +143,7 @@ class GroupHandler:
                 Key(
                     [self.mod],
                     str(group_number+1),
-                    lazy.function(_focus_group, screen_index, current_group_name),
+                    lazy.function(_focus_group_and_screen, screen_index, current_group_name),
                     desc = f"Switch to group {group_number}: {current_group_name}"
                     )])
                 self.keys.extend([
@@ -133,7 +151,7 @@ class GroupHandler:
                     [self.mod, "shift"],
                     str(group_number+1),
                     lazy.window.togroup(current_group_name),
-                    lazy.function(_focus_group, screen_index, current_group_name),
+                    lazy.function(_focus_group_and_screen, screen_index, current_group_name),
                     desc = f"Switch to & move focused window to group {group_number}: {current_group_name}",
                     )])
                 group_number += 1
@@ -288,12 +306,13 @@ class TaskbarHandler():
 mod = "mod4"
 terminal = "kitty"
 browser = "brave"
+editor = "code"
 
 colorscheme = ColorSchemeHandler().get_scheme("default", "dark")
 monitor_count = 1  # Set to the number of monitors you have
 
 # Keybindings
-keys = KeyBindings(mod, terminal, browser).keys
+keys = KeyBindings(mod, terminal, editor, browser).keys
 
 
 # Groups
