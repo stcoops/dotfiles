@@ -9,11 +9,11 @@ Keep source files in this repo and symlink or install them to $HOME so configs c
 1. Clone:
 ```bash
 git clone https://github.com/stcoops/dotfiles.git ~/dotfiles
-cd ~/dotfiles
 ```
 2. use GNU Stow:
 ```bash
-stow -t $HOME zsh nvim git tmux
+cd ~/dotfiles
+stow .
 ```
 
 ## Structure
