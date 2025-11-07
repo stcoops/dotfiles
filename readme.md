@@ -39,6 +39,6 @@ Typical repo layout:
 ```
 
 ## Usage
-- Edit files in their folders (.config/xx)
-- Re-run install.sh or stow after changes.
+- Edit files in their folders (e.g. .config//kitty/kitty.conf)
+- Re-run `stow .` after changes.
 - Keep repo synced with `git pull` and commit local edits.
