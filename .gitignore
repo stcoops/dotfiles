@@ -1,3 +1,6 @@
 .config/pulse/
 .config/BraveSoftware
 .config/Code
+.config/go
+.config/dconf
+
