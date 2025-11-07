@@ -10,10 +10,19 @@ Keep source files in this repo and symlink or install them to $HOME so configs c
 ```bash
 git clone https://github.com/stcoops/dotfiles.git ~/dotfiles
 ```
-2. use GNU Stow:
+2. Use GNU Stow (see [GNU Stow](https://www.gnu.org/software/stow/)):
 ```bash
-cd ~/dotfiles
-stow .
+# Debian/Ubuntu
+sudo apt install stow
+
+# macOS (Homebrew)
+brew install stow
+
+# Arch (btw!)
+sudo pacman -S stow
+```
+```bash
+stow ~/dotfiles
 ```
 
 ## Structure
@@ -40,5 +49,5 @@ Typical repo layout:
 
 ## Usage
 - Edit files in their folders (e.g. .config//kitty/kitty.conf)
-- Re-run `stow .` after changes.
+- Re-run `stow ~/dotfiles` after changes.
 - Keep repo synced with `git pull` and commit local edits.
