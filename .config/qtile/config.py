@@ -7,7 +7,7 @@ Modularization has been implemented to enhance readability and maintainability, 
 
 from libqtile import layout, qtile, widget, hook, bar
 from libqtile.config import Click, Drag, Group, Key, Match, Screen 
-#from libqtile DropDown, ScratchPad
+from libqtile.config import DropDown, ScratchPad
 from libqtile.lazy import lazy
 
 # Classes
@@ -127,6 +127,7 @@ class GroupHandler:
         self.groups= []
         self.group_names_split = split_array(group_names, monitor_count)
         self.init_groups(self.group_names_split)
+        self._make_scratchpad_group()
 
     def init_groups(self, group_names):
         # Initializing
@@ -159,14 +160,14 @@ class GroupHandler:
     def get_groups_and_keys(self):
         return self.groups, self.keys
     
-    #def _make_scratchpad_group(self):
-    #    scratchpad_group = Group("scratchpad", [
-    #        DropDown("term", self.terminal, width=0.5, height=0.5, x=0.25, y=0.25, opacity=0.9)
-    #    ])
-    #    self.groups.append(scratchpad_group)
-    #    self.keys.extend([
-    #        Key([self.mod], "t", lazy.group["scratchpad"].dropdown_toggle("term"), desc="Toggle Scratchpad Terminal")
-    #    ])
+    def _make_scratchpad_group(self):
+        scratchpad_group = ScratchPad("scratchpad", [
+            DropDown("term", terminal, width=0.6, height=0.6, x=0.2, y=0.15, opacity=0.7)
+        ])
+        self.groups.append(scratchpad_group)
+        self.keys.extend([
+            Key([self.mod], "t", lazy.group["scratchpad"].dropdown_toggle("term"), desc="Toggle Scratchpad Terminal")
+        ])
     
 #################
 # Color Schemes #
