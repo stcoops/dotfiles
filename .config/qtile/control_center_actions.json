@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Reload qtile",
+    "cmd": "qtile cmd-obj -o / -f reload"
+  },
+  {
+    "name": "Restart qtile",
+    "cmd": "qtile cmd-obj -o / -f restart"
+  },
+  {
+    "name": "Shutdown qtile",
+    "cmd": "qtile cmd-obj -o / -f shutdown"
+  },
+  {
+    "name": "Toggle focused floating",
+    "cmd": "qtile cmd-obj -o / -f toogle_floating || true"
+  },
+  {
+    "name": "Spawn terminal",
+    "cmd": "alacritty"
+  },
+  {
+    "name": "Volume +5%",
+    "cmd": "pactl set-sink-volume @DEFAULT_SINK@ +5%"
+  },
+  {
+    "name": "Volume -5%",
+    "cmd": "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+  },
+  {
+    "name": "Mute toggle",
+    "cmd": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+  },
+  {
+    "name": "Brightness +10%",
+    "cmd": "brightnessctl set +10%"
+  },
+  {
+    "name": "Brightness -10%",
+    "cmd": "brightnessctl set 10%-"
+  },
+  {
+    "name": "Run custom command...",
+    "cmd": "shutdown now"
+  }
+]

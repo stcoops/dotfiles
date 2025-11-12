@@ -9,17 +9,375 @@ from libqtile import layout, qtile, widget, hook, bar
 from libqtile.config import Click, Drag, Group, Key, Match, Screen 
 from libqtile.config import DropDown, ScratchPad
 from libqtile.lazy import lazy
+import subprocess, time, os
+import threading
+from qtile_extras.popup import PopupText, PopupSlider, PopupRelativeLayout
 
-# Classes
+# Settings
 
+HOME_DIR = os.path.expanduser("~")
+QTILE_CONFIG_DIR = os.path.join(HOME_DIR, ".config", "qtile")
+SCRIPTS_DIR = os.path.join(QTILE_CONFIG_DIR, "scripts")
+
+mod = "mod4"
+terminal = "kitty"
+browser = "brave"
+editor = "code"
+
+group_names = ["1", "2", "3", "4", "5"] # more: , "6", "7", "8", "9"]
+monitor_count = 1  # Set to the number of monitors you have
+
+colorscheme_name = "default" # see colorschemes.py for available schemes
+colorscheme_brightness = "dark"  # "light" or "dark"
+
+
+wallpaper = os.path.join(HOME_DIR,".config" ,"wallpapers","wp12821730.jpg") # path to wallpaper image, or None
+
+# Logging setup
+LOG_FILE = os.path.join(QTILE_CONFIG_DIR, "qtile.log")
+with open(LOG_FILE, "w") as f:
+    f.write("")
+
+def _log_error(message):
+    """Log an error message to the log file with a timestamp."""
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a") as f:
+        f.write(f"[{timestamp}] ERROR: {message}\n")
+
+# Popups
+
+def _brightness_popup(qtile, level):
+    """Show a simple brightness popup with one PopupText and a visible slider."""
+    # Ensure slider colors contrast with background; fall back to foreground if needed
+    color_below = getattr(colorscheme, "accent", None) or colorscheme.foreground
+    color_above = getattr(colorscheme, "highlight", None) or colorscheme.foreground
+
+    popup = PopupRelativeLayout(
+        qtile,
+        width=360,
+        height=80,
+        rows = 2,
+        cols = 1,
+        background=colorscheme.background,
+        controls=[
+            PopupSlider(
+                value=level,
+                min_value=0,
+                max_value=100,
+                # explicitly size and position the slider so it is visible
+                width=0.9,
+                height=0.45,
+                pos_x=0.05,
+                pos_y=0.15,
+                background=colorscheme.background,
+                color_below=color_below,
+                color_above=color_above,
+                marker_size=0,
+                bar_size=5,
+                highlight_radius=2,
+                opacity=0.8,
+                name="brightness_slider",
+            ),
+            PopupText(
+                # show numeric level so the popup isn't just an empty box
+                text=f"Brightness: {int(level)}%",
+                background=colorscheme.background,
+                foreground=colorscheme.foreground,
+                fontsize=18,
+                v_align="top",
+                h_align="center",
+                pos_x=0.05,
+                pos_y=0.55,
+                width=0.9,
+                height=0.35,
+                name="brightness_label",
+            ),
+        ],
+    )
+    popup.show(relative_to_bar=True, x = (1920 - 360) //2, y = 1025)
+    try:
+        qtile.call_later(1.0, popup.hide)
+    except Exception:
+        time.sleep(1.0)
+        popup.hide()
+
+def _increase_brightness(qtile, amount=10):
+    """Increase brightness by amount (0-100)."""
+    _change_brightness(qtile, amount)
+
+def _decrease_brightness(qtile, amount=-10):
+    """Decrease brightness by amount (0-100)."""
+    _change_brightness(qtile, amount)
+
+def _change_brightness(qtile, amount=10):
+    """Change brightness by amount (0-100)."""
+    # Get current brightness
+    try:
+        result = subprocess.run(
+            ["bash", os.path.join(SCRIPTS_DIR, "brightness.sh"), "get"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        current_brightness = float(result.stdout.strip())
+    except Exception:
+        _show_centered_popup(qtile, "Error getting brightness", timeout=10.0)
+        current_brightness = 50.0  # Default if command fails
+
+    # Calculate new brightness
+    new_brightness = min(100, current_brightness + amount)
+    new_brightness = max(10, new_brightness)  # Ensure not below 0
+
+    string_new_brightness = str(int(new_brightness)) + "%"
+
+    # Set new brightness
+    subprocess.run(["bash", os.path.join(SCRIPTS_DIR, "brightness.sh"), "set", string_new_brightness])
+
+    # Show popup
+    _brightness_popup(qtile, int(new_brightness))
+
+def _volume_up(qtile):
+    """Increase the volume."""
+    _change_volume(qtile, 5)
+
+def _volume_down(qtile):
+    """Decrease the volume."""
+    _change_volume(qtile, -5)
+
+def _mute_volume(qtile):
+    """Mute the volume."""
+    _change_volume(qtile, 0, mute=True)
+
+def _change_volume(qtile, change, mute=False):
+    """Change volume by change (positive or negative or mute)."""
+    # Get current volume and mute status
+    try:
+        result = subprocess.run(
+            ["bash", os.path.join(SCRIPTS_DIR, "volumecontrol.sh"), "get"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        output = result.stdout.strip().splitlines()
+        current_volume = float(output[0])
+        try:
+            is_muted = output[1].lower() == "mute"
+        except IndexError:
+            is_muted = False
+    except Exception:
+        _log_error("Error getting volume: " + str(Exception))
+        _show_centered_popup(qtile, "Error getting volume", timeout=10.0)
+        current_volume = 50.0  # Default if command fails
+        is_muted = False
+
+    # Calculate new volume
+    
+
+    # Show popup
+    if mute:
+        subprocess.run(["bash", os.path.join(SCRIPTS_DIR, "volumecontrol.sh"), "mute"])
+        _volume_popup(qtile, -1)
+        if is_muted:
+            # If already muted, unmute and show current volume
+            _volume_popup(qtile, current_volume)
+    else:
+        new_volume = min(100, max(0, current_volume + change))
+        subprocess.run(["bash", os.path.join(SCRIPTS_DIR, "volumecontrol.sh"), "set", str(int(new_volume))])
+        _volume_popup(qtile, new_volume)
+
+def _volume_popup(qtile, level):
+    color_below = getattr(colorscheme, "accent", None) or colorscheme.foreground
+    color_above = getattr(colorscheme, "highlight", None) or colorscheme.foreground
+    if level == -1:
+        level = 0
+        volume_text = "Volume: Muted"
+    else:
+        volume_text = f"Volume: {int(level)}%"
+    popup = PopupRelativeLayout(
+        qtile,
+        width=360,
+        height=80,
+        rows = 2,
+        cols = 1,
+        background=colorscheme.background,
+        controls=[
+            PopupSlider(
+                value=level,
+                min_value=0,
+                max_value=100,
+                # explicitly size and position the slider so it is visible
+                width=0.9,
+                height=0.45,
+                pos_x=0.05,
+                pos_y=0.15,
+                background=colorscheme.background,
+                color_below=color_below,
+                color_above=color_above,
+                marker_size=0,
+                bar_size=5,
+                highlight_radius=2,
+                opacity=0.8,
+                name="volume_slider",
+            ),
+            PopupText(
+                # show numeric level so the popup isn't just an empty box
+                text=volume_text,
+                background=colorscheme.background,
+                foreground=colorscheme.foreground,
+                fontsize=18,
+                v_align="top",
+                h_align="center",
+                pos_x=0.05,
+                pos_y=0.55,
+                width=0.9,
+                height=0.35,
+                name="volume_label",
+            ),
+        ],
+    )
+    popup.show(relative_to_bar=True, x = (1920 - 360) //2, y = 1025)
+    try:
+        qtile.call_later(1.0, popup.hide)
+    except Exception:
+        time.sleep(1.0)
+        popup.hide()
+
+def _show_centered_popup(qtile, message, width=300, height=60, timeout=1.0):
+    """Create a simple centered popup with one PopupText and auto-hide it."""
+    popup = PopupRelativeLayout(
+        qtile,
+        width=width,
+        height=height,
+        background=colorscheme.background,
+        controls=[
+            PopupText(
+                text=message,
+                background=colorscheme.background,
+                foreground=colorscheme.foreground,
+                opacity=0.95,
+                width=0.9,
+                height=0.9,
+                pos_x=0.05,
+                pos_y=0.05,
+                v_align="middle",
+                h_align="center",
+                fontsize=22,
+                name="msg"
+            ),
+        ],
+    )
+    popup.show(centered=True)
+    try:
+        qtile.call_later(timeout, popup.hide)
+    except Exception:
+        time.sleep(timeout)
+        popup.hide()
+
+############
+# Shutdown #
+############
+
+def _shutdown_qtile(qtile):
+    _show_centered_popup(qtile, "Shutting down...", timeout=2.0)
+    qtile.call_later(2.0, qtile.shutdown)
+
+##########
+# Reload #
+##########
+
+def _run_and_notify(qtile, cmd, start_msg, success_msg=None, fail_msg=None, on_success=None, start_timeout=2.0, result_timeout=3.5):
+    """Run cmd in a thread, show start_msg immediately, then show success/fail when it finishes.
+    on_success is called on the Qtile main loop if returncode == 0.
+    cmd should be a list (no shell) or a string (shell=True)."""
+    # show a start popup so user gets immediate feedback
+    _show_centered_popup(qtile, start_msg, timeout=start_timeout)
+
+    def worker():
+        try:
+            if isinstance(cmd, str):
+                p = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            else:
+                p = subprocess.run(cmd, capture_output=True, text=True)
+            out = p.stdout or ""
+            err = p.stderr or ""
+            rc = p.returncode
+        except Exception as e:
+            rc = 1
+            out = ""
+            err = str(e)
+
+        def finish():
+            if rc == 0:
+                if success_msg:
+                    _show_centered_popup(qtile, success_msg + ("\n" + out if out else ""), timeout=result_timeout)
+                if on_success:
+                    # schedule on_success after the success popup timeout so the popup isn't cleared by reload
+                    def call_on_success():
+                        try:
+                            on_success()
+                        except Exception as e:
+                            _show_centered_popup(qtile, "on_success callback failed:\n" + str(e), timeout=result_timeout)
+                    qtile.call_later(result_timeout + 0.1, call_on_success)
+            else:
+                msg = (fail_msg or "Command failed") + "\n" + (err or out or f"exit {rc}")
+                _log_error(msg)
+                _show_centered_popup(qtile, msg, timeout=result_timeout)
+        # schedule UI changes on qtile's loop
+        qtile.call_later(0, finish)
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def _reload_qtile(qtile, startup=False):
+    if startup:
+        # at startup just fire the helper scripts quickly (no need to wait)
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")], "Starting picom...", "Picom started", "Picom start failed")
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")], "Starting xcape...", "Xcape started", "Xcape start failed")
+        return
+
+    # Restart picom and xcape and report when each actually completes
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")],
+        "Reloading picom...",
+        "Picom reload complete",
+        "Picom reload failed",
+        start_timeout=1.0,
+        result_timeout=1.5
+    )
+
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")],
+        "Reloading xcape...",
+        "Xcape reload complete",
+        "Xcape reload failed",
+        start_timeout=1.0,
+        result_timeout=0.5
+    )
+
+    # Run py_compile and reload only when it succeeds
+    def on_config_ok():
+        try:
+            qtile.reload_config()
+            _show_centered_popup(qtile, "Reload complete", timeout=1.5)
+        except Exception as e:
+            _log_error("Error reloading config: " + str(e))
+            _show_centered_popup(qtile, "Reload failed:\n" + str(e), timeout=3.5)
+
+    _run_and_notify(
+        qtile,
+        ["python", "-m", "py_compile", os.path.join(QTILE_CONFIG_DIR, "config.py")],
+        "Testing qtile config...",
+        "Config OK",
+        "Config error",
+        on_success=on_config_ok,
+        start_timeout=1.5,
+        result_timeout=0.5
+    )
 ###############
 # Keybindings #
 ###############
-
-def _reload_qtile(qtile):
-    qtile.reload_config()
-    qtile.spawn("bash home/solve/.config/qtile/reloadpicom.sh")
-
 
 class KeyBindings:
 
@@ -58,7 +416,8 @@ class KeyBindings:
 
 
             Key([self.mod, "shift"], "home", lazy.function(_reload_qtile), desc="Reload the config"),
-            Key([self.mod, "shift"], "end", lazy.shutdown(), desc="Shutdown Qtile"),
+            #Key([self.mod, "shift"], "home", lazy.reload_config(), desc="Reload the config"),
+            Key([self.mod, "shift"], "end", lazy.function(_shutdown_qtile), desc="Shutdown Qtile"),
 
             Key([self.mod], "space", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 
@@ -66,17 +425,25 @@ class KeyBindings:
         
     def _multi_media_keys(self):
         self.keys.extend([
-            Key([], "XF86AudioRaiseVolume", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh up"), desc="Increase volume"),
-            Key([], "XF86AudioLowerVolume", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh down"), desc="Decrease volume"),
-            Key([], "XF86AudioMute", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh mute"), desc="Mute/Unmute volume"),
+            Key([], "XF86AudioRaiseVolume", lazy.function(_volume_up), desc="Increase volume"),
+            Key([], "XF86AudioLowerVolume", lazy.function(_volume_down), desc="Decrease volume"),
+            Key([], "XF86AudioMute", lazy.function(_mute_volume), desc="Mute/Unmute volume"),
 
-            Key([], "XF86MonBrightnessUp", lazy.spawn("bash /home/solve/.config/qtile/brightness.sh up"), desc="Increase brightness"),
-            Key([], "XF86MonBrightnessDown", lazy.spawn("bash /home/solve/.config/qtile/brightness.sh down"), desc="Decrease brightness"),
+            #Key([], "XF86AudioRaiseVolume", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh up"), desc="Increase volume"),
+            #Key([], "XF86AudioLowerVolume", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh down"), desc="Decrease volume"),
+            #Key([], "XF86AudioMute", lazy.spawn("bash /home/solve/.config/qtile/volumecontrol.sh mute"), desc="Mute/Unmute volume"),
+
+
+            Key([], "XF86MonBrightnessUp", lazy.function(_increase_brightness), desc="Increase brightness"),
+            Key([], "XF86MonBrightnessDown", lazy.function(_decrease_brightness), desc="Decrease brightness"),
+
+            #Key([], "XF86MonBrightnessUp", lazy.spawn("bash /home/solve/.config/qtile/brightness.sh up"), desc="Increase brightness"),
+            #Key([], "XF86MonBrightnessDown", lazy.spawn("bash /home/solve/.config/qtile/brightness.sh down"), desc="Decrease brightness"),
             
             Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause"), desc="Play/Pause media"),
 
-            Key([], "XF86KbdBrightnessUp", lazy.spawn("bash /home/solve/.config/qtile/kbd_brightness.sh"), desc="Increase keyboard backlight brightness"),
-            ])
+            Key([], "XF86KbdBrightnessUp", lazy.spawn("bash " + os.path.join(SCRIPTS_DIR, "kbd_brightness.sh")), desc="Increase keyboard backlight brightness"),
+])
         
     def _multi_screen_keys(self, screen_count):
         for i in range(screen_count):
@@ -128,6 +495,8 @@ class GroupHandler:
         self.group_names_split = split_array(group_names, monitor_count)
         self.init_groups(self.group_names_split)
         self._make_scratchpad_group()
+        self._make_control_center_scratchpad()
+        #self._make_center_notification_scratchpad()
 
     def init_groups(self, group_names):
         # Initializing
@@ -161,14 +530,27 @@ class GroupHandler:
         return self.groups, self.keys
     
     def _make_scratchpad_group(self):
-        scratchpad_group = ScratchPad("scratchpad", [
-            DropDown("term", terminal, width=0.6, height=0.6, x=0.2, y=0.15, opacity=0.7)
-        ])
+        scratchpad_group = ScratchPad(name="scratchpad", dropdowns=[
+            DropDown("term", str(terminal + " htop"), width=0.6, height=0.6, x=0.2, y=0.15, opacity=0.6, on_focus_lost_hide=True),
+                ], single=True
+            )
         self.groups.append(scratchpad_group)
         self.keys.extend([
             Key([self.mod], "t", lazy.group["scratchpad"].dropdown_toggle("term"), desc="Toggle Scratchpad Terminal")
         ])
     
+    def _make_control_center_scratchpad(self):
+        control_center_scratchpad = ScratchPad(name="control_center_scratchpad", dropdowns=[
+            DropDown("control_center_dropdown", 
+                     str(terminal + " python /home/solve/.config/qtile/control_center.py"),
+                     width = 0.3, height = 0.4, x = 0.6975, y = 0.003#
+                     , opacity = 0.6, on_focus_lost_hide = True
+                     )], single=True)
+        self.groups.append(control_center_scratchpad)
+        self.keys.extend([
+            Key([], "XF86MyComputer", lazy.group["control_center_scratchpad"].dropdown_toggle("control_center_dropdown"), desc="Toggle Control Center")
+        ])
+
 #################
 # Color Schemes #
 #################
@@ -188,6 +570,9 @@ class ColorSchemeHandler:
 
 #       if no errors:
         return self.schemes[scheme_name][light_dark]
+    
+    def check_scheme_exists(self, scheme_name: str, light_dark: str):
+        return scheme_name in self.schemes and light_dark in self.schemes[scheme_name]
 
 
 
@@ -220,6 +605,8 @@ class TaskbarHandler():
         self._add_battery()
         self._add_line_separator()
         self._add_clock()
+        self._add_line_separator()
+        self._add_control_center()
         self._add_blank_space()
 
     def CompileWidgets(self):
@@ -258,7 +645,7 @@ class TaskbarHandler():
     def _add_battery(self):
         self.widgets.append(
                 widget.Battery(
-                    format = "{percent:2.0%}",
+                    format = "B: {percent:2.0%}",
                     foreground = self.colors.foreground,
                     background = self.colors.background,
                     fontsize = 16,
@@ -270,11 +657,25 @@ class TaskbarHandler():
         self.widgets.append(
                 widget.Clock(
                     #format = "%A %d %B %Y %H:%M ",
-                    format = "%H:%M",
+                    format = "T: %H:%M",
                     foreground = self.colors.foreground,
                     background = self.colors.background,
                     fontsize = 16,
                     #**self.widget_defaults
+                )
+            )
+    
+    def _add_control_center(self):
+        self.widgets.append(
+                widget.TextBox(
+                    text = "⚙",
+                    fontsize = 18,
+                    foreground = self.colors.foreground,
+                    background = self.colors.background,
+                    mouse_callbacks = {
+                        "Button1": lazy.group["control_center_scratchpad"].dropdown_toggle("control_center_dropdown")
+                        #"Button1": lambda: qtile.cmd_spawn("python /home/solve/.config/qtile/control_center.py")
+                    }
                 )
             )
         
@@ -300,24 +701,20 @@ class TaskbarHandler():
                 )
             )
 
-# Universal settings
 
+colorhandler = ColorSchemeHandler()
+if colorhandler.check_scheme_exists(colorscheme_name, colorscheme_brightness):
+    colorscheme = colorhandler.get_scheme(colorscheme_name, colorscheme_brightness)
+else:
+    colorscheme = colorhandler.get_scheme(colorscheme_name := "default", colorscheme_brightness := "dark")
 
-
-mod = "mod4"
-terminal = "kitty"
-browser = "brave"
-editor = "code"
-
-colorscheme = ColorSchemeHandler().get_scheme("default", "dark")
-monitor_count = 1  # Set to the number of monitors you have
 
 # Keybindings
 keys = KeyBindings(mod, terminal, editor, browser).keys
 
 
 # Groups
-group_names = ["1", "2", "3", "4", "5"] # more: , "6", "7", "8", "9"]
+
 group_handler = GroupHandler(mod, group_names, monitor_count) 
 groups, group_keys = group_handler.get_groups_and_keys()
 keys.extend(group_keys)
@@ -344,16 +741,14 @@ layouts = [
 #NOTE: need to configure taskbar, widgets, screens, startup
 
 screens = []
-wallpaper = "/home/solve/.config/wallpapers/wp12821730.jpg" # path to wallpaper image, or None
-import os
-if wallpaper:
+if wallpaper != "":
     if os.path.exists(wallpaper):
         pass
     else:
-        wallpaper = None
+        wallpaper = ""
 for monitor_id in range(monitor_count):
     group_names = group_handler.group_names_split[monitor_id]
-    if wallpaper:
+    if wallpaper != "":
         
         screens.append(Screen(
             wallpaper = wallpaper,
@@ -365,11 +760,10 @@ for monitor_id in range(monitor_count):
             top = TaskbarHandler(colorscheme, group_names).CompileWidgets()
             ))
         
-
-import subprocess
 @hook.subscribe.startup_once
 def auto_startup():
-    subprocess.Popen(["picom", "-c"])
+    #subprocess.Popen(["bash", "/home/solve/.config/qtile/autostart.sh"])
+    _reload_qtile(qtile, startup=True)
 
 
 dgroups_key_binder = None
