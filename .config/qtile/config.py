@@ -333,6 +333,7 @@ def _reload_qtile(qtile, startup=False):
         # at startup just fire the helper scripts quickly (no need to wait)
         _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")], "Starting picom...", "Picom started", "Picom start failed")
         _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")], "Starting xcape...", "Xcape started", "Xcape start failed")
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh"), "reset"], "Resetting touchpad...", "Touchpad reset complete", "Touchpad reset failed")
         return
 
     # Restart picom and xcape and report when each actually completes
@@ -352,6 +353,16 @@ def _reload_qtile(qtile, startup=False):
         "Reloading xcape...",
         "Xcape reload complete",
         "Xcape reload failed",
+        start_timeout=1.0,
+        result_timeout=0.5
+    )
+
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh"), "reset"],
+        "Resetting touchpad...",
+        "Touchpad reset complete",
+        "Touchpad reset failed",
         start_timeout=1.0,
         result_timeout=0.5
     )
