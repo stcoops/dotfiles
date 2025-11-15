@@ -11,7 +11,7 @@ from libqtile.config import DropDown, ScratchPad
 from libqtile.lazy import lazy
 import subprocess, time, os
 import threading
-from qtile_extras.popup import PopupText, PopupSlider, PopupRelativeLayout
+from qtile_extras.popup import PopupText, PopupSlider, PopupRelativeLayout, PopupMenu, PopupMenuItem, PopupMenuSeparator
 
 # Settings
 
@@ -41,10 +41,311 @@ with open(LOG_FILE, "w") as f:
 def _log_error(message):
     """Log an error message to the log file with a timestamp."""
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    with open(LOG_FILE, "a") as f:
-        f.write(f"[{timestamp}] ERROR: {message}\n")
+    try:
+        with open(LOG_FILE, "a") as f:
+            f.write(f"[{timestamp}] ERROR: {message}\n")
+    except Exception:
+        # fallback debug file in /tmp so we always get some trace
+        try:
+            with open(LOG_FILE, "a") as f:
+                f.write(f"[{timestamp}] ERROR: {message}\n")
+        except Exception:
+            pass
+
+def _debug(msg):
+    """Quick unconditional debug writer to /tmp for interactive debugging."""
+    try:
+        with open(LOG_FILE, "a") as f:
+            f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} DEBUG: {msg}\n")
+    except Exception:
+        pass
+
+
+# colorscheme setup
+#################
+# Color Schemes #
+#################
+
+class ColorSchemeHandler:
+    def __init__(self):
+        self._load_schemes()
+        self.default = self.schemes["default"]["dark"]
+
+    def get_scheme(self, scheme_name: str, light_dark: str):
+#        Note: Improve error handling (flash screen if error?)
+#        also could be improved to store schemes in json file and read on call (for efficiency)
+        if light_dark not in ["light", "dark"]:
+            return self.default
+        if scheme_name not in self.schemes:
+            return self.default
+
+#       if no errors:
+        return self.schemes[scheme_name][light_dark]
+    
+    def check_scheme_exists(self, scheme_name: str, light_dark: str):
+        return scheme_name in self.schemes and light_dark in self.schemes[scheme_name]
+
+
+
+    def _load_schemes(self):
+        from colorschemes import schemes
+        self.schemes = schemes
+
+colorhandler = ColorSchemeHandler()
+if colorhandler.check_scheme_exists(colorscheme_name, colorscheme_brightness):
+    colorscheme = colorhandler.get_scheme(colorscheme_name, colorscheme_brightness)
+else:
+    colorscheme = colorhandler.get_scheme(colorscheme_name := "default", colorscheme_brightness := "dark")
+
+def _show_centered_popup(qtile, message, width=300, height=60, timeout=1.0):
+    """Create a simple centered popup with one PopupText and auto-hide it."""
+    popup = PopupRelativeLayout(
+        qtile,
+        width=width,
+        height=height,
+        background=colorscheme.background,
+        controls=[
+            PopupText(
+                text=message,
+                background=colorscheme.background,
+                foreground=colorscheme.foreground,
+                opacity=0.95,
+                width=0.9,
+                height=0.9,
+                pos_x=0.05,
+                pos_y=0.05,
+                v_align="middle",
+                h_align="center",
+                fontsize=22,
+                name="msg"
+            ),
+        ],
+    )
+    popup.show(qtile=qtile, centered=True)
+    try:
+        qtile.call_later(timeout, popup.hide)
+    except Exception:
+        time.sleep(timeout)
+        popup.hide()
+
+############
+# Shutdown #
+############
+
+def _shutdown_qtile(qtile):
+    _show_centered_popup(qtile, "Shutting down...", timeout=2.0)
+    qtile.call_later(2.0, qtile.shutdown)
+
+##########
+# Reload #
+##########
+
+def _run_and_notify(qtile, cmd, start_msg, success_msg=None, fail_msg=None, on_success=None, start_timeout=2.0, result_timeout=3.5, error_timeout=5.0):
+    """Run cmd in a thread, show start_msg immediately, then show success/fail when it finishes.
+    on_success is called on the Qtile main loop if returncode == 0.
+    cmd should be a list (no shell) or a string (shell=True)."""
+    # show a start popup so user gets immediate feedback
+    _show_centered_popup(qtile, start_msg, timeout=start_timeout)
+
+    def worker():
+        try:
+            if isinstance(cmd, str):
+                p = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            else:
+                p = subprocess.run(cmd, capture_output=True, text=True)
+            out = p.stdout or ""
+            err = p.stderr or ""
+            rc = p.returncode
+        except Exception as e:
+            rc = 1
+            out = ""
+            err = str(e)
+
+        def finish():
+            if rc == 0:
+                if success_msg:
+                    _show_centered_popup(qtile, success_msg + ("\n" + out if out else ""), timeout=result_timeout)
+                if on_success:
+                    # schedule on_success after the success popup timeout so the popup isn't cleared by reload
+                    def call_on_success():
+                        try:
+                            on_success()
+                        except Exception as e:
+                            _show_centered_popup(qtile, "on_success callback failed:\n" + str(e), timeout=result_timeout)
+                    qtile.call_later(result_timeout + 0.1, call_on_success)
+            else:
+                msg = (fail_msg or "Command failed") + "\n" + (err or out or f"exit {rc}")
+                _log_error(msg)
+                _show_centered_popup(qtile, msg, timeout=error_timeout)
+        # schedule UI changes on qtile's loop
+        qtile.call_later(0, finish)
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def _reload_qtile(qtile, startup=False):
+    if startup:
+        # at startup just fire the helper scripts quickly (no need to wait)
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")], "Starting picom...", "Picom started", "Picom start failed")
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")], "Starting xcape...", "Xcape started", "Xcape start failed")
+        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh")], "setting touchpad...", "Touchpad started", "Touchpad start failed")
+        return
+
+    # Restart picom and xcape and report when each actually completes
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")],
+        "Reloading picom...",
+        "Picom reload complete",
+        "Picom reload failed",
+        start_timeout=0.5,
+        result_timeout=0.5
+    )
+
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")],
+        "Reloading xcape...",
+        "Xcape reload complete",
+        "Xcape reload failed",
+        start_timeout=0.5,
+        result_timeout=0.5
+    )
+
+    _run_and_notify(
+        qtile,
+        ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh"), "reset"],
+        "Resetting touchpad...",
+        "Touchpad reset complete",
+        "Touchpad reset failed",
+        start_timeout=0.5,
+        result_timeout=0.5
+    )
+
+    # Run py_compile and reload only when it succeeds
+    def on_config_ok():
+        try:
+            qtile.reload_config()
+            _show_centered_popup(qtile, "Reload complete", timeout=1.5)
+        except Exception as e:
+            _log_error("Error reloading config: " + str(e))
+            _show_centered_popup(qtile, "Reload failed:\n" + str(e), timeout=3.5)
+
+    _run_and_notify(
+        qtile,
+        ["python", "-m", "py_compile", os.path.join(QTILE_CONFIG_DIR, "config.py")],
+        "Testing qtile config...",
+        "Config OK",
+        "Config error",
+        on_success=on_config_ok,
+        start_timeout=1.5,
+        result_timeout=0.5
+    )
+
+
+
+
 
 # Popups
+
+class MenuState:
+    def __init__(self):
+        self.menu_popup = None
+        self.menu_shown = False
+
+    def toggle_menu(self, qtile):
+        """Always create a popup for the current qtile/screen so it works after group switches."""
+        _debug(f"toggle_menu called; menu_shown={self.menu_shown}")
+        try:
+            if self.menu_shown:
+                try:
+                    if self.menu_popup:
+                        _debug("hiding existing popup")
+                        self.menu_popup.hide()
+                except Exception as e:
+                    _log_error("Error hiding popup in toggle_menu: " + str(e))
+                self.menu_popup = None
+                self.menu_shown = False
+                _debug("menu cleared")
+                return
+
+            # discard any old popup tied to previous qtile/screen
+            self.menu_popup = _make_menu_popup(qtile)
+
+            # ensure popup behaviour is explicit
+            try:
+                self.menu_popup.close_on_click = False
+                self.menu_popup.hide_on_mouse_leave = False
+            except Exception:
+                pass
+
+            # show the newly created popup (no grab)
+            _debug("showing new popup for current screen")
+            try:
+                self.menu_popup.show(relative_to_bar=True, x=(1920 - 400), y=5)
+            except Exception as e:
+                _log_error("popup.show() failed: " + str(e))
+            self.menu_shown = True
+            _debug("menu_shown set True")
+        except Exception as e:
+            _log_error("Menu toggle error: " + str(e))
+
+
+# remove @lazy.function so the popup can call this directly
+def menu_item_callback(qtile, action):
+    """Callback function for menu items. Runs immediately and hides/clears the popup."""
+    _debug(f"menu_item_callback action={action}")
+    try:
+        if action == "reload":
+            _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")], "Reloading picom...", "Picom reload complete", "Picom reload failed")
+        elif action == "shutdown":
+            _shutdown_qtile(qtile)
+        elif action == "open_terminal":
+            qtile.spawn(terminal)
+            _log_error("Spawning terminal: " + terminal)
+        elif action == "open_browser":
+            qtile.spawn(browser)
+        elif action == "open_editor":
+            qtile.spawn(editor)
+    finally:
+        # hide and drop the popup so subsequent toggles recreate it for the current screen
+        try:
+            if menu_state and getattr(menu_state, "menu_popup", None):
+                _debug("hiding popup from menu_item_callback")
+                try:
+                    menu_state.menu_popup.hide()
+                except Exception as e:
+                    _log_error("Error hiding popup in menu_item_callback: " + str(e))
+        except Exception:
+            pass
+        try:
+            menu_state.menu_popup = None
+            menu_state.menu_shown = False
+        except Exception:
+            pass
+
+
+def _make_menu_popup(qtile):
+    """Create the menu popup with various options."""
+    # using make_generators for simplicity
+    menuItemGen, menuSepGen, menuPopupGen = PopupMenu.make_generators(
+        background=colorscheme.background,
+        foreground=colorscheme.foreground,
+        fontsize=20,
+        opacity=0.6)
+    menu_items = [menuItemGen(text="Reload Qtile", mouse_callbacks = {"Button1": lambda qtile, action = "reload": menu_item_callback(qtile, action)}),
+                  menuItemGen(text="Shutdown Qtile", mouse_callbacks = {"Button1": lambda qtile, action = "shutdown": menu_item_callback(qtile, action)}),
+                  menuSepGen(),
+                  menuItemGen(text="Open Terminal", mouse_callbacks = {"Button1": lambda qtile, action = "open_terminal": menu_item_callback(qtile, action)}),
+                  menuItemGen(text="Open Browser", mouse_callbacks = {"Button1": lambda qtile, action = "open_browser": menu_item_callback(qtile, action)}),
+                  menuItemGen(text="Open File Editor", mouse_callbacks = {"Button1": lambda qtile, action = "open_editor": menu_item_callback(qtile, action)}),
+                  menuSepGen()]
+    # don't auto-hide on mouse-leave; recreate on group change instead
+    menu_popup = menuPopupGen(qtile, menuitems=menu_items, width=400,
+        height=30 * len(menu_items), close_on_click=False, hide_on_mouse_leave=False)
+    return menu_popup
+
+
 
 def _brightness_popup(qtile, level):
     """Show a simple brightness popup with one PopupText and a visible slider."""
@@ -181,6 +482,9 @@ def _change_volume(qtile, change, mute=False):
             # If already muted, unmute and show current volume
             _volume_popup(qtile, current_volume)
     else:
+        if is_muted:
+            # If muted, unmute first
+            subprocess.run(["bash", os.path.join(SCRIPTS_DIR, "volumecontrol.sh"), "mute"])
         new_volume = min(100, max(0, current_volume + change))
         subprocess.run(["bash", os.path.join(SCRIPTS_DIR, "volumecontrol.sh"), "set", str(int(new_volume))])
         _volume_popup(qtile, new_volume)
@@ -242,161 +546,19 @@ def _volume_popup(qtile, level):
         time.sleep(1.0)
         popup.hide()
 
-def _show_centered_popup(qtile, message, width=300, height=60, timeout=1.0):
-    """Create a simple centered popup with one PopupText and auto-hide it."""
-    popup = PopupRelativeLayout(
-        qtile,
-        width=width,
-        height=height,
-        background=colorscheme.background,
-        controls=[
-            PopupText(
-                text=message,
-                background=colorscheme.background,
-                foreground=colorscheme.foreground,
-                opacity=0.95,
-                width=0.9,
-                height=0.9,
-                pos_x=0.05,
-                pos_y=0.05,
-                v_align="middle",
-                h_align="center",
-                fontsize=22,
-                name="msg"
-            ),
-        ],
-    )
-    popup.show(centered=True)
-    try:
-        qtile.call_later(timeout, popup.hide)
-    except Exception:
-        time.sleep(timeout)
-        popup.hide()
 
-############
-# Shutdown #
-############
-
-def _shutdown_qtile(qtile):
-    _show_centered_popup(qtile, "Shutting down...", timeout=2.0)
-    qtile.call_later(2.0, qtile.shutdown)
-
-##########
-# Reload #
-##########
-
-def _run_and_notify(qtile, cmd, start_msg, success_msg=None, fail_msg=None, on_success=None, start_timeout=2.0, result_timeout=3.5):
-    """Run cmd in a thread, show start_msg immediately, then show success/fail when it finishes.
-    on_success is called on the Qtile main loop if returncode == 0.
-    cmd should be a list (no shell) or a string (shell=True)."""
-    # show a start popup so user gets immediate feedback
-    _show_centered_popup(qtile, start_msg, timeout=start_timeout)
-
-    def worker():
-        try:
-            if isinstance(cmd, str):
-                p = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-            else:
-                p = subprocess.run(cmd, capture_output=True, text=True)
-            out = p.stdout or ""
-            err = p.stderr or ""
-            rc = p.returncode
-        except Exception as e:
-            rc = 1
-            out = ""
-            err = str(e)
-
-        def finish():
-            if rc == 0:
-                if success_msg:
-                    _show_centered_popup(qtile, success_msg + ("\n" + out if out else ""), timeout=result_timeout)
-                if on_success:
-                    # schedule on_success after the success popup timeout so the popup isn't cleared by reload
-                    def call_on_success():
-                        try:
-                            on_success()
-                        except Exception as e:
-                            _show_centered_popup(qtile, "on_success callback failed:\n" + str(e), timeout=result_timeout)
-                    qtile.call_later(result_timeout + 0.1, call_on_success)
-            else:
-                msg = (fail_msg or "Command failed") + "\n" + (err or out or f"exit {rc}")
-                _log_error(msg)
-                _show_centered_popup(qtile, msg, timeout=result_timeout)
-        # schedule UI changes on qtile's loop
-        qtile.call_later(0, finish)
-
-    threading.Thread(target=worker, daemon=True).start()
-
-
-def _reload_qtile(qtile, startup=False):
-    if startup:
-        # at startup just fire the helper scripts quickly (no need to wait)
-        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")], "Starting picom...", "Picom started", "Picom start failed")
-        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")], "Starting xcape...", "Xcape started", "Xcape start failed")
-        _run_and_notify(qtile, ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh"), "reset"], "Resetting touchpad...", "Touchpad reset complete", "Touchpad reset failed")
-        return
-
-    # Restart picom and xcape and report when each actually completes
-    _run_and_notify(
-        qtile,
-        ["bash", os.path.join(SCRIPTS_DIR, "reloadpicom.sh")],
-        "Reloading picom...",
-        "Picom reload complete",
-        "Picom reload failed",
-        start_timeout=1.0,
-        result_timeout=1.5
-    )
-
-    _run_and_notify(
-        qtile,
-        ["bash", os.path.join(SCRIPTS_DIR, "reloadxcape.sh")],
-        "Reloading xcape...",
-        "Xcape reload complete",
-        "Xcape reload failed",
-        start_timeout=1.0,
-        result_timeout=0.5
-    )
-
-    _run_and_notify(
-        qtile,
-        ["bash", os.path.join(SCRIPTS_DIR, "touchpadsetup.sh"), "reset"],
-        "Resetting touchpad...",
-        "Touchpad reset complete",
-        "Touchpad reset failed",
-        start_timeout=1.0,
-        result_timeout=0.5
-    )
-
-    # Run py_compile and reload only when it succeeds
-    def on_config_ok():
-        try:
-            qtile.reload_config()
-            _show_centered_popup(qtile, "Reload complete", timeout=1.5)
-        except Exception as e:
-            _log_error("Error reloading config: " + str(e))
-            _show_centered_popup(qtile, "Reload failed:\n" + str(e), timeout=3.5)
-
-    _run_and_notify(
-        qtile,
-        ["python", "-m", "py_compile", os.path.join(QTILE_CONFIG_DIR, "config.py")],
-        "Testing qtile config...",
-        "Config OK",
-        "Config error",
-        on_success=on_config_ok,
-        start_timeout=1.5,
-        result_timeout=0.5
-    )
 ###############
 # Keybindings #
 ###############
 
 class KeyBindings:
 
-    def __init__(self, mod, terminal, editor=None, browser=None, screen_count=1):
+    def __init__(self, mod, terminal, editor=None, browser=None, menu_state=None, screen_count=1):
         self.mod = mod
         self.terminal = terminal
         self.browser = browser
         self.editor = editor
+        self.menu_state = menu_state
         self.keys = []
         self._base_keys()
         self._multi_media_keys()
@@ -406,7 +568,8 @@ class KeyBindings:
             self._browser_key()
         if self.editor:
             self._file_editor()
-
+        if self.menu_state:
+            self._menu_key()
     def _base_keys(self):
         self.keys.extend([
             Key([self.mod], "Left", lazy.layout.left(), desc="Move window focus up"),
@@ -427,7 +590,6 @@ class KeyBindings:
 
 
             Key([self.mod, "shift"], "home", lazy.function(_reload_qtile), desc="Reload the config"),
-            #Key([self.mod, "shift"], "home", lazy.reload_config(), desc="Reload the config"),
             Key([self.mod, "shift"], "end", lazy.function(_shutdown_qtile), desc="Shutdown Qtile"),
 
             Key([self.mod], "space", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
@@ -455,6 +617,12 @@ class KeyBindings:
 
             Key([], "XF86KbdBrightnessUp", lazy.spawn("bash " + os.path.join(SCRIPTS_DIR, "kbd_brightness.sh")), desc="Increase keyboard backlight brightness"),
 ])
+        
+    def _menu_key(self):
+        self.menu_state = MenuState()
+        self.keys.append(
+            Key([], "XF86MyComputer", lazy.function(self.menu_state.toggle_menu), desc="Toggle menu popup"),
+            )
         
     def _multi_screen_keys(self, screen_count):
         for i in range(screen_count):
@@ -493,8 +661,40 @@ def split_array(arr, B):
     return parts
 
 def _focus_group_and_screen(qtile, screen_index, group_name):
+    _debug(f"Focusing screen {screen_index} and group {group_name}")
     qtile.focus_screen(screen_index)
     qtile.groups_map[group_name].toscreen()
+    if menu_state.menu_shown:
+        menu_state.toggle_menu(qtile)
+    # Ensure any open menu is fully hidden/cleared so toggling works immediately after group switch
+    _debug(f"_focus_group_and_screen called screen_index={screen_index} group_name={group_name}")
+    try:
+        if "menu_state" in globals() and menu_state is not None:
+            try:
+                if getattr(menu_state, "menu_popup", None):
+                    _debug("hiding popup before group switch")
+                    menu_state.menu_popup.hide()
+            except Exception as e:
+                _log_error("Error hiding popup during group switch: " + str(e))
+            try:
+                menu_state.menu_popup = None
+                menu_state.menu_shown = False
+                _debug("menu_state cleared during group switch")
+                _debug("recreating menu popup for new screen/group")
+                # recreate popup for the new screen using the module-level factory
+                menu_state.menu_popup = _make_menu_popup(qtile)
+                menu_state.menu_shown = False
+                _debug("menu_popup recreated for new screen")
+            except Exception:
+                _debug("menu_state clearing failed during group switch")
+                pass
+        else:
+            _debug("no menu_state to clear during group switch")
+    except Exception as e:
+        _log_error("Error clearing menu on group switch: " + str(e))
+        pass
+
+    
 
 
 class GroupHandler:
@@ -506,7 +706,7 @@ class GroupHandler:
         self.group_names_split = split_array(group_names, monitor_count)
         self.init_groups(self.group_names_split)
         self._make_scratchpad_group()
-        self._make_control_center_scratchpad()
+        #self._make_control_center_scratchpad()
         #self._make_center_notification_scratchpad()
 
     def init_groups(self, group_names):
@@ -549,7 +749,7 @@ class GroupHandler:
         self.keys.extend([
             Key([self.mod], "t", lazy.group["scratchpad"].dropdown_toggle("term"), desc="Toggle Scratchpad Terminal")
         ])
-    
+    """
     def _make_control_center_scratchpad(self):
         control_center_scratchpad = ScratchPad(name="control_center_scratchpad", dropdowns=[
             DropDown("control_center_dropdown", 
@@ -561,42 +761,16 @@ class GroupHandler:
         self.keys.extend([
             Key([], "XF86MyComputer", lazy.group["control_center_scratchpad"].dropdown_toggle("control_center_dropdown"), desc="Toggle Control Center")
         ])
+    """
 
-#################
-# Color Schemes #
-#################
-
-class ColorSchemeHandler:
-    def __init__(self):
-        self._load_schemes()
-        self.default = self.schemes["default"]["dark"]
-
-    def get_scheme(self, scheme_name: str, light_dark: str):
-#        Note: Improve error handling (flash screen if error?)
-#        also could be improved to store schemes in json file and read on call (for efficiency)
-        if light_dark not in ["light", "dark"]:
-            return self.default
-        if scheme_name not in self.schemes:
-            return self.default
-
-#       if no errors:
-        return self.schemes[scheme_name][light_dark]
-    
-    def check_scheme_exists(self, scheme_name: str, light_dark: str):
-        return scheme_name in self.schemes and light_dark in self.schemes[scheme_name]
-
-
-
-    def _load_schemes(self):
-        from colorschemes import schemes
-        self.schemes = schemes
             
 
 class TaskbarHandler():
-    def __init__(self, colorscheme, groups_for_this_screen):
+    def __init__(self, colorscheme, groups_for_this_screen, menu_state = None):
         self.groups = groups_for_this_screen
         self.colors = colorscheme
         self.widgets = []
+        self.menu_state = menu_state
         self.widget_defaults = dict(
             font="Ubuntu Mono",
             fontsize=14,
@@ -616,8 +790,9 @@ class TaskbarHandler():
         self._add_battery()
         self._add_line_separator()
         self._add_clock()
-        self._add_line_separator()
-        self._add_control_center()
+        if self.menu_state is not None:
+            self._add_line_separator()
+            self._add_control_center(self.menu_state)
         self._add_blank_space()
 
     def CompileWidgets(self):
@@ -676,16 +851,16 @@ class TaskbarHandler():
                 )
             )
     
-    def _add_control_center(self):
+    def _add_control_center(self, menu):
         self.widgets.append(
                 widget.TextBox(
                     text = "⚙",
                     fontsize = 18,
                     foreground = self.colors.foreground,
                     background = self.colors.background,
+                    # use a direct callable so the popup receives the current qtile argument
                     mouse_callbacks = {
-                        "Button1": lazy.group["control_center_scratchpad"].dropdown_toggle("control_center_dropdown")
-                        #"Button1": lambda: qtile.cmd_spawn("python /home/solve/.config/qtile/control_center.py")
+                        "Button1": lambda qtile, m=menu: m.toggle_menu(qtile)
                     }
                 )
             )
@@ -713,16 +888,13 @@ class TaskbarHandler():
             )
 
 
-colorhandler = ColorSchemeHandler()
-if colorhandler.check_scheme_exists(colorscheme_name, colorscheme_brightness):
-    colorscheme = colorhandler.get_scheme(colorscheme_name, colorscheme_brightness)
-else:
-    colorscheme = colorhandler.get_scheme(colorscheme_name := "default", colorscheme_brightness := "dark")
+# call menustate for keybinding and widget
+global menu_state
+menu_state = MenuState()
 
 
 # Keybindings
-keys = KeyBindings(mod, terminal, editor, browser).keys
-
+keys = KeyBindings(mod, terminal, editor, browser, menu_state).keys
 
 # Groups
 
@@ -764,11 +936,11 @@ for monitor_id in range(monitor_count):
         screens.append(Screen(
             wallpaper = wallpaper,
             wallpaper_mode = "fill",
-            top = TaskbarHandler(colorscheme, group_names).CompileWidgets()
+            top = TaskbarHandler(colorscheme, group_names, menu_state).CompileWidgets()
         ))
     else:
         screens.append(Screen(
-            top = TaskbarHandler(colorscheme, group_names).CompileWidgets()
+            top = TaskbarHandler(colorscheme, group_names, menu_state).CompileWidgets()
             ))
         
 @hook.subscribe.startup_once
@@ -790,3 +962,41 @@ reconfigure_screens = True
 
 
 wmname = "QTile"
+
+# ensure a global menu_state exists
+try:
+    menu_state
+except NameError:
+    menu_state = MenuState()
+
+def _clear_menu_on_group_change(*args, **kwargs):
+    """Best-effort hide+clear the popup state when the group/screen changes."""
+    try:
+        if menu_state and getattr(menu_state, "menu_popup", None):
+            try:
+                menu_state.menu_popup.hide()
+            except Exception:
+                pass
+        menu_state.menu_popup = None
+        menu_state.menu_shown = False
+        # debug trace so you can confirm the handler ran even if qtile.log is silent
+        with open("/tmp/qtile_debug.log", "a") as fh:
+            fh.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} INFO: cleared menu state on group/screen change\n")
+    except Exception as e:
+        try:
+            with open("/tmp/qtile_debug.log", "a") as fh:
+                fh.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')} ERROR: clear_menu failed: {e}\n")
+        except Exception:
+            pass
+
+# Subscribe the clear handler to a variety of hooks (best-effort; some names may not exist in older Qtile)
+_hook_names = [
+    "setgroup", "change_group", "changegroup", "current_screen_change",
+    "screen_change", "group_window_add", "group_window_remove", "group_focus"
+]
+for _hn in _hook_names:
+    try:
+        getattr(hook.subscribe, _hn)(_clear_menu_on_group_change)
+    except Exception:
+        # ignore missing hooks; we have multiple fallbacks above
+        pass
