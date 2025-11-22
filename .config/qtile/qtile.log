@@ -1,34 +1,335 @@
-2025-11-15 10:47:02 DEBUG: toggle_menu called; menu_shown=False
-2025-11-15 10:47:02 DEBUG: showing new popup for current screen
-2025-11-15 10:47:02 DEBUG: menu_shown set True
-2025-11-15 10:47:03 DEBUG: toggle_menu called; menu_shown=True
-2025-11-15 10:47:03 DEBUG: hiding existing popup
-2025-11-15 10:47:03 DEBUG: menu cleared
-2025-11-15 10:47:04 DEBUG: Focusing screen 0 and group 2
-2025-11-15 10:47:04 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
-2025-11-15 10:47:04 DEBUG: menu_state cleared during group switch
-2025-11-15 10:47:04 DEBUG: recreating menu popup for new screen/group
-2025-11-15 10:47:04 DEBUG: menu_popup recreated for new screen
-2025-11-15 10:47:04 DEBUG: toggle_menu called; menu_shown=False
-2025-11-15 10:47:04 DEBUG: showing new popup for current screen
-2025-11-15 10:47:04 DEBUG: menu_shown set True
-2025-11-15 10:47:05 DEBUG: Focusing screen 0 and group 1
-2025-11-15 10:47:05 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
-2025-11-15 10:47:05 DEBUG: menu_state cleared during group switch
-2025-11-15 10:47:05 DEBUG: recreating menu popup for new screen/group
-2025-11-15 10:47:05 DEBUG: menu_popup recreated for new screen
-2025-11-15 10:47:06 DEBUG: toggle_menu called; menu_shown=True
-2025-11-15 10:47:06 DEBUG: hiding existing popup
-2025-11-15 10:47:06 DEBUG: menu cleared
-2025-11-15 10:47:07 DEBUG: toggle_menu called; menu_shown=False
-2025-11-15 10:47:07 DEBUG: showing new popup for current screen
-2025-11-15 10:47:07 DEBUG: menu_shown set True
-2025-11-15 10:47:07 DEBUG: toggle_menu called; menu_shown=True
-2025-11-15 10:47:07 DEBUG: hiding existing popup
-2025-11-15 10:47:07 DEBUG: menu cleared
-2025-11-15 10:47:08 DEBUG: toggle_menu called; menu_shown=False
-2025-11-15 10:47:08 DEBUG: showing new popup for current screen
-2025-11-15 10:47:08 DEBUG: menu_shown set True
-2025-11-15 10:47:09 DEBUG: toggle_menu called; menu_shown=True
-2025-11-15 10:47:09 DEBUG: hiding existing popup
-2025-11-15 10:47:09 DEBUG: menu cleared
+2025-11-21 23:39:59 DEBUG: Focusing screen 0 and group 2
+2025-11-21 23:39:59 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-21 23:39:59 DEBUG: menu_state cleared during group switch
+2025-11-21 23:39:59 DEBUG: recreating menu popup for new screen/group
+2025-11-21 23:39:59 DEBUG: menu_popup recreated for new screen
+2025-11-21 23:40:00 DEBUG: Focusing screen 0 and group 1
+2025-11-21 23:40:00 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-21 23:40:00 DEBUG: menu_state cleared during group switch
+2025-11-21 23:40:00 DEBUG: recreating menu popup for new screen/group
+2025-11-21 23:40:00 DEBUG: menu_popup recreated for new screen
+2025-11-22 00:28:11 DEBUG: Focusing screen 0 and group 4
+2025-11-22 00:28:11 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 00:28:11 DEBUG: menu_state cleared during group switch
+2025-11-22 00:28:11 DEBUG: recreating menu popup for new screen/group
+2025-11-22 00:28:11 DEBUG: menu_popup recreated for new screen
+2025-11-22 05:36:25 DEBUG: Focusing screen 0 and group 3
+2025-11-22 05:36:25 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 05:36:25 DEBUG: menu_state cleared during group switch
+2025-11-22 05:36:25 DEBUG: recreating menu popup for new screen/group
+2025-11-22 05:36:25 DEBUG: menu_popup recreated for new screen
+2025-11-22 05:36:26 DEBUG: Focusing screen 0 and group 2
+2025-11-22 05:36:26 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 05:36:26 DEBUG: menu_state cleared during group switch
+2025-11-22 05:36:26 DEBUG: recreating menu popup for new screen/group
+2025-11-22 05:36:26 DEBUG: menu_popup recreated for new screen
+2025-11-22 05:36:27 DEBUG: Focusing screen 0 and group 1
+2025-11-22 05:36:27 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 05:36:27 DEBUG: menu_state cleared during group switch
+2025-11-22 05:36:27 DEBUG: recreating menu popup for new screen/group
+2025-11-22 05:36:27 DEBUG: menu_popup recreated for new screen
+2025-11-22 05:36:37 DEBUG: Focusing screen 0 and group 3
+2025-11-22 05:36:37 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 05:36:37 DEBUG: menu_state cleared during group switch
+2025-11-22 05:36:37 DEBUG: recreating menu popup for new screen/group
+2025-11-22 05:36:37 DEBUG: menu_popup recreated for new screen
+2025-11-22 05:36:38 DEBUG: Focusing screen 0 and group 4
+2025-11-22 05:36:38 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 05:36:38 DEBUG: menu_state cleared during group switch
+2025-11-22 05:36:38 DEBUG: recreating menu popup for new screen/group
+2025-11-22 05:36:38 DEBUG: menu_popup recreated for new screen
+2025-11-22 06:28:08 DEBUG: Focusing screen 0 and group 3
+2025-11-22 06:28:08 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 06:28:08 DEBUG: menu_state cleared during group switch
+2025-11-22 06:28:08 DEBUG: recreating menu popup for new screen/group
+2025-11-22 06:28:08 DEBUG: menu_popup recreated for new screen
+2025-11-22 06:28:08 DEBUG: Focusing screen 0 and group 3
+2025-11-22 06:28:08 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 06:28:08 DEBUG: hiding popup before group switch
+[2025-11-22 06:28:08] ERROR: Error hiding popup during group switch: PopupMenu has no attribute: popup
+2025-11-22 06:28:08 DEBUG: menu_state cleared during group switch
+2025-11-22 06:28:08 DEBUG: recreating menu popup for new screen/group
+2025-11-22 06:28:08 DEBUG: menu_popup recreated for new screen
+2025-11-22 06:28:09 DEBUG: Focusing screen 0 and group 2
+2025-11-22 06:28:09 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 06:28:09 DEBUG: menu_state cleared during group switch
+2025-11-22 06:28:09 DEBUG: recreating menu popup for new screen/group
+2025-11-22 06:28:09 DEBUG: menu_popup recreated for new screen
+2025-11-22 06:28:09 DEBUG: Focusing screen 0 and group 1
+2025-11-22 06:28:09 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 06:28:09 DEBUG: menu_state cleared during group switch
+2025-11-22 06:28:09 DEBUG: recreating menu popup for new screen/group
+2025-11-22 06:28:09 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:22 DEBUG: Focusing screen 0 and group 2
+2025-11-22 15:39:23 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 15:39:23 DEBUG: menu_state cleared during group switch
+2025-11-22 15:39:23 DEBUG: recreating menu popup for new screen/group
+2025-11-22 15:39:23 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:24 DEBUG: Focusing screen 0 and group 1
+2025-11-22 15:39:24 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 15:39:24 DEBUG: menu_state cleared during group switch
+2025-11-22 15:39:24 DEBUG: recreating menu popup for new screen/group
+2025-11-22 15:39:24 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:24 DEBUG: Focusing screen 0 and group 3
+2025-11-22 15:39:24 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 15:39:24 DEBUG: menu_state cleared during group switch
+2025-11-22 15:39:24 DEBUG: recreating menu popup for new screen/group
+2025-11-22 15:39:24 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:24 DEBUG: Focusing screen 0 and group 2
+2025-11-22 15:39:24 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 15:39:24 DEBUG: menu_state cleared during group switch
+2025-11-22 15:39:24 DEBUG: recreating menu popup for new screen/group
+2025-11-22 15:39:24 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:25 DEBUG: Focusing screen 0 and group 3
+2025-11-22 15:39:25 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 15:39:25 DEBUG: menu_state cleared during group switch
+2025-11-22 15:39:25 DEBUG: recreating menu popup for new screen/group
+2025-11-22 15:39:25 DEBUG: menu_popup recreated for new screen
+2025-11-22 15:39:26 DEBUG: toggle_menu called; menu_shown=False
+2025-11-22 15:39:26 DEBUG: showing new popup for current screen
+2025-11-22 15:39:26 DEBUG: menu_shown set True
+2025-11-22 16:01:24 DEBUG: toggle_menu called; menu_shown=True
+2025-11-22 16:01:24 DEBUG: hiding existing popup
+2025-11-22 16:01:24 DEBUG: menu cleared
+2025-11-22 16:01:25 DEBUG: toggle_menu called; menu_shown=False
+2025-11-22 16:01:25 DEBUG: showing new popup for current screen
+2025-11-22 16:01:25 DEBUG: menu_shown set True
+2025-11-22 16:01:25 DEBUG: toggle_menu called; menu_shown=True
+2025-11-22 16:01:25 DEBUG: hiding existing popup
+2025-11-22 16:01:25 DEBUG: menu cleared
+2025-11-22 16:05:15 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:05:15 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:05:15 DEBUG: menu_state cleared during group switch
+2025-11-22 16:05:15 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:05:15 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:40 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:06:40 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:06:40 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:40 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:40 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:51 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:06:51 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:06:51 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:51 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:51 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:51 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:06:52 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:06:52 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:52 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:52 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:52 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:06:52 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:06:52 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:52 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:52 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:52 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:06:53 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:06:53 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:53 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:53 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:06:55 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:06:55 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:06:55 DEBUG: menu_state cleared during group switch
+2025-11-22 16:06:55 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:06:55 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:02 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:07:02 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:07:02 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:02 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:02 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:02 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:07:02 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:07:02 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:02 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:02 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:03 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:07:03 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:07:03 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:03 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:03 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:05 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:07:05 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:07:05 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:05 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:05 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:18 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:07:18 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:07:18 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:18 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:18 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:18 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:07:18 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:07:18 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:18 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:18 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:19 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:07:19 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:07:19 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:19 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:19 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:26 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:07:26 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:07:26 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:26 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:26 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:26 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:07:26 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:07:26 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:26 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:26 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:47 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:07:47 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:07:47 DEBUG: hiding popup before group switch
+[2025-11-22 16:07:47] ERROR: Error hiding popup during group switch: PopupMenu has no attribute: popup
+2025-11-22 16:07:47 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:47 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:47 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:48 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:07:48 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:07:48 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:48 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:48 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:07:49 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:07:49 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:07:49 DEBUG: menu_state cleared during group switch
+2025-11-22 16:07:49 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:07:49 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:10:22 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:10:22 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:10:22 DEBUG: menu_state cleared during group switch
+2025-11-22 16:10:22 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:10:22 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:10:57 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:10:57 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:10:57 DEBUG: menu_state cleared during group switch
+2025-11-22 16:10:57 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:10:57 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:10:57 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:10:57 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:10:57 DEBUG: menu_state cleared during group switch
+2025-11-22 16:10:57 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:10:57 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:10:57 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:10:58 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:10:58 DEBUG: menu_state cleared during group switch
+2025-11-22 16:10:58 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:10:58 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:18:22 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:18:22 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:18:22 DEBUG: menu_state cleared during group switch
+2025-11-22 16:18:22 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:18:22 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:18:26 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:18:26 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:18:26 DEBUG: hiding popup before group switch
+[2025-11-22 16:18:26] ERROR: Error hiding popup during group switch: PopupMenu has no attribute: popup
+2025-11-22 16:18:26 DEBUG: menu_state cleared during group switch
+2025-11-22 16:18:26 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:18:26 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:18:26 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:18:26 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:18:26 DEBUG: menu_state cleared during group switch
+2025-11-22 16:18:26 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:18:26 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:39:43 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:39:43 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:39:43 DEBUG: menu_state cleared during group switch
+2025-11-22 16:39:43 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:39:43 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:39:45 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:39:45 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:39:45 DEBUG: menu_state cleared during group switch
+2025-11-22 16:39:45 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:39:45 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:41:06 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:41:06 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:41:06 DEBUG: menu_state cleared during group switch
+2025-11-22 16:41:06 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:41:06 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:41:07 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:41:07 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:41:07 DEBUG: menu_state cleared during group switch
+2025-11-22 16:41:07 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:41:07 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:41:28 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:41:28 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:41:28 DEBUG: menu_state cleared during group switch
+2025-11-22 16:41:28 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:41:28 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:41:29 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:41:29 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:41:29 DEBUG: menu_state cleared during group switch
+2025-11-22 16:41:29 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:41:29 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:41:31 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:41:31 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:41:31 DEBUG: menu_state cleared during group switch
+2025-11-22 16:41:31 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:41:31 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:31 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:42:31 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:42:31 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:31 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:31 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:41 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:42:41 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:42:41 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:41 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:41 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:41 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:42:41 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:42:41 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:41 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:41 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:41 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:42:41 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:42:41 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:41 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:41 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:46 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:42:46 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:42:46 DEBUG: hiding popup before group switch
+[2025-11-22 16:42:46] ERROR: Error hiding popup during group switch: PopupMenu has no attribute: popup
+2025-11-22 16:42:46 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:46 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:46 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:42:47 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:42:47 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:42:47 DEBUG: menu_state cleared during group switch
+2025-11-22 16:42:47 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:42:47 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:11 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:57:11 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:57:11 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:11 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:11 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:12 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:57:12 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:57:12 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:12 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:12 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:12 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:57:12 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:57:12 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:12 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:12 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:12 DEBUG: Focusing screen 0 and group 1
+2025-11-22 16:57:12 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
+2025-11-22 16:57:12 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:12 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:12 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:13 DEBUG: Focusing screen 0 and group 2
+2025-11-22 16:57:13 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
+2025-11-22 16:57:13 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:13 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:13 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:14 DEBUG: Focusing screen 0 and group 3
+2025-11-22 16:57:14 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
+2025-11-22 16:57:14 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:14 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:14 DEBUG: menu_popup recreated for new screen
+2025-11-22 16:57:15 DEBUG: Focusing screen 0 and group 4
+2025-11-22 16:57:15 DEBUG: _focus_group_and_screen called screen_index=0 group_name=4
+2025-11-22 16:57:15 DEBUG: menu_state cleared during group switch
+2025-11-22 16:57:15 DEBUG: recreating menu popup for new screen/group
+2025-11-22 16:57:15 DEBUG: menu_popup recreated for new screen

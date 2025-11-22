@@ -23,15 +23,16 @@ mod = "mod4"
 terminal = "kitty"
 browser = "brave"
 editor = "code"
+notepad = "tjournal"
 
-group_names = ["1", "2", "3", "4", "5"] # more: , "6", "7", "8", "9"]
+group_names = ["1", "2", "3", "4", "5", "6", ]#"7", "8", "9"]
 monitor_count = 1  # Set to the number of monitors you have
 
 colorscheme_name = "default" # see colorschemes.py for available schemes
 colorscheme_brightness = "dark"  # "light" or "dark"
 
-
-wallpaper = os.path.join(HOME_DIR,".config" ,"wallpapers","wp12821730.jpg") # path to wallpaper image, or None
+# option light = wp12821730.jpg
+wallpaper = os.path.join(HOME_DIR,".config" ,"wallpapers","hands.jpg") # path to wallpaper image, or None
 
 # Logging setup
 LOG_FILE = os.path.join(QTILE_CONFIG_DIR, "qtile.log")
