@@ -1,12 +1,18 @@
+"""dotlogs.py - utility for logging to a dotfile log for easier debugging of qtile config issues.
+ - logger class with functions for error, warning, info, debug and custom logging."""
 
-# Logging utility for Qtile configuration
 import time
+from .structure import LOG_FILE
+
+debug_mode = True
 
 class Logger:
     """A simple logger class to log messages to a specified log file. Functions include error, warning, info, debug and custom logging."""
-    def __init__(self, log_file, debug_mode=False):
-        self.LOG_FILE = log_file
+    def __init__(self):
+        self.LOG_FILE = LOG_FILE
         self.debug_mode = debug_mode
+        self.clear()
+        self.info("log initialized.")
 
     def clear(self):
         """Clear the log file."""
@@ -45,3 +51,6 @@ class Logger:
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         with open(self.LOG_FILE, "a") as f:
             f.write(f"[{timestamp}] {level.upper()}: {msg}\n")
+
+# Initialize a global logger instance
+log = Logger()

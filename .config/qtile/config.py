@@ -571,6 +571,8 @@ class KeyBindings:
             self._file_editor()
         if self.menu_state:
             self._menu_key()
+        self._add_prompt_spawn()
+
     def _base_keys(self):
         self.keys.extend([
             Key([self.mod], "Left", lazy.layout.left(), desc="Move window focus up"),
@@ -645,6 +647,11 @@ class KeyBindings:
         self.keys.append(
             Key([self.mod], "v", lazy.spawn(editor), desc="Launch file editor")
             )
+        
+    def _add_prompt_spawn(self):
+        self.keys.append(
+            Key([self.mod], "x", lazy.spawncmd(), desc="Spawn a command using a prompt widget")
+        )
 
 #######################
 # Group functionality #
@@ -780,6 +787,8 @@ class TaskbarHandler():
         # anything pre-spacer (left side)
         self._add_blank_space()
         self._add_group_box()
+        self._add_line_separator()
+        self._add_prompt_spawn()
 
         # add spacer
         self.widgets.append(
@@ -788,6 +797,13 @@ class TaskbarHandler():
                 )
             )
         # anything post-spacer (right side)
+        self._add_window_name()
+        self.widgets.append(
+                widget.Spacer(
+                    background = self.colors.background,
+                )
+            )
+        self._add_line_separator()
         self._add_battery()
         self._add_line_separator()
         self._add_clock()
@@ -828,6 +844,27 @@ class TaskbarHandler():
                     **self.widget_defaults
                     )
                 )
+        
+    def _add_prompt_spawn(self):
+        self.widgets.append(
+                widget.Prompt(
+                    prompt = "Run: ",
+                    foreground = self.colors.foreground,
+                    background = self.colors.background,
+                    fontsize = 16,
+                    #**self.widget_defaults
+                )
+            )
+        
+    def _add_window_name(self):
+        self.widgets.append(
+                widget.WindowName(
+                    foreground = self.colors.foreground,
+                    background = self.colors.background,
+                    fontsize = 16,
+                    #**self.widget_defaults
+                )
+            )
         
     def _add_battery(self):
         self.widgets.append(
@@ -877,12 +914,11 @@ class TaskbarHandler():
                 )
             )
 
-    def _add_blank_space(self):
+    def _add_blank_space(self, linewidth=3, padding=5):
         self.widgets.append(
                 widget.Sep(
-                    linewidth = 3,
-                    padding = 5,
-
+                    linewidth = linewidth,
+                    padding = padding,
                     foreground = self.colors.background,
                     background = self.colors.background,
                 )

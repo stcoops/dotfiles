@@ -31,13 +31,12 @@ for d in $DEVICES; do
 	fi
 	echo "   -> current: $cur  max: $max"
 
-	# Toggle: set to max, wait 2s, set to min (0), wait 2s
+	# Toggle: set to max, wait 0.2s, set to min
 	echo "   -> setting $d to max ($max)"
 	brightnessctl -d "$d" set "$max" >/dev/null 2>&1 || echo "     (set to $max failed)"
-	sleep 2
+	sleep 0.2
 	echo "   -> setting $d to min (0)"
 	brightnessctl -d "$d" set 0 >/dev/null 2>&1 || echo "     (set to 0 failed)"
-	sleep 2
 
 	# 1 second gap before next device
 	sleep 1

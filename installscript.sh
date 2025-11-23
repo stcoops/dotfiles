@@ -65,6 +65,7 @@ PACMAN_PKGS=(
     gnome-keyring
     ttf-fira-code
     tui-journal
+    python-pywal
 )
 
 AUR_PKGS=(
