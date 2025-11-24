@@ -1,6 +1,2 @@
-[2025-11-23 17:29:06] INFO: log initialized.
-[2025-11-23 17:29:06] DEBUG: Detected 1 monitors: [{'id': '1', 'width': 1920, 'height': 1080}]
-[2025-11-23 17:29:06] DEBUG: Pywal colors loaded from colors.json successfully.
-[2025-11-23 17:29:07] INFO: --> running config.py as main script for testing purposes
-[2025-11-23 17:29:07] INFO: Configured workspaces: [['1', '2', '3', '4', '5', '6']]
-[2025-11-23 17:29:07] INFO: Using colors: {'background': '#0B0F18', 'foreground': '#cfdcec', 'cursor': '#cfdcec', 'color0': '#0B0F18', 'color1': '#6C8EB6', 'color2': '#789EC8', 'color3': '#879CBA', 'color4': '#8EAFD4', 'color5': '#9CB9DC', 'color6': '#A6C2E1', 'color7': '#cfdcec', 'color8': '#909aa5', 'color9': '#6C8EB6', 'color10': '#789EC8', 'color11': '#879CBA', 'color12': '#8EAFD4', 'color13': '#9CB9DC', 'color14': '#A6C2E1', 'color15': '#cfdcec'}
+[2025-11-24 09:56:27] INFO: log initialized.
+[2025-11-24 09:56:27] DEBUG: Detected 1 monitors: [{'id': '1', 'width': 1920, 'height': 1080}]

@@ -3,40 +3,45 @@ from libqtile.lazy import lazy
 
 import os
 
+
+from defaults import mod, browser, editor, terminal
+
 from utils.structure import SCRIPTS_DIR
+from utils.dotlogs import log
+from utils.getmonitors import monitors
+
+
 from modules.popups.volume import VolumeController
 from modules.popups.brightness import BrightnessController
 from modules.popups.qtile_control import QtileController
 
+from modules.groups import group_keys
+
 class KeyBindings:
 
-    def __init__(self, mod, terminal, editor=None, browser=None, menu_state=None, screen_count=1):
+    def __init__(self):
+        # Initialize controllers
         self.mod = mod
-        self.terminal = terminal
-        self.browser = browser
-        self.editor = editor
-        self.menu_state = menu_state
-
-
         self.volume_controller = VolumeController()
         self.brightness_controller = BrightnessController()
         self.qtile_controller = QtileController()
 
-
         self.keys = []
+
         self._base_keys()
         self._multi_media_keys()
-        if screen_count > 1:
-            self._multi_screen_keys(screen_count)
-        if self.browser:
+
+
+        if len(monitors) > 1:
+            self._multi_screen_keys(len(monitors))
+        if browser:
             self._browser_key()
-        if self.editor:
+        if editor:
             self._file_editor()
-        if self.menu_state:
-            self._menu_key()
 
     def _base_keys(self):
         self.keys.extend([
+
             Key([self.mod], "Left", lazy.layout.left(), desc="Move window focus up"),
             Key([self.mod], "Right", lazy.layout.next(), desc="Move window focus to other window"),
             Key([self.mod, "shift"], "Right", lazy.layout.shuffle_down(), desc="Move window down"),
@@ -58,8 +63,7 @@ class KeyBindings:
             Key([self.mod, "shift"], "end", lazy.function(self.qtile_controller.shutdown_qtile), desc="Shutdown Qtile"),
 
             Key([self.mod], "space", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
-
-            ])
+        ])
         
     def _multi_media_keys(self):
         self.keys.extend([
@@ -73,7 +77,11 @@ class KeyBindings:
             Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause"), desc="Play/Pause media"), 
 
             Key([], "XF86KbdBrightnessUp", lazy.spawn("bash " + os.path.join(SCRIPTS_DIR, "kbd_brightness.sh")), desc="Increase keyboard backlight brightness"),
-])
+        ])
+
+    def _add_group_keys(self):
+        self.keys.extend(group_keys)
+
     menu = """
     def _menu_key(self):
         self.menu_state = MenuState()
@@ -93,16 +101,6 @@ class KeyBindings:
             )
     
     def _file_editor(self):
-        if self.editor == "nvim":
-            editor = "kitty -e nvim"
-        else:
-            editor = self.editor
-
         self.keys.append(
             Key([self.mod], "v", lazy.spawn(editor), desc="Launch file editor")
             )
-        
-    def _add_prompt_spawn(self):
-        self.keys.append(
-            Key([self.mod], "x", lazy.spawncmd(), desc="Spawn a command using a prompt widget")
-        )
