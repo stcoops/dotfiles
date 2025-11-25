@@ -1,28 +1,30 @@
-2025-11-24 09:12:24 DEBUG: Focusing screen 0 and group 2
-2025-11-24 09:12:24 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
-2025-11-24 09:12:24 DEBUG: menu_state cleared during group switch
-2025-11-24 09:12:24 DEBUG: recreating menu popup for new screen/group
-2025-11-24 09:12:24 DEBUG: menu_popup recreated for new screen
-2025-11-24 09:12:31 DEBUG: toggle_menu called; menu_shown=False
-2025-11-24 09:12:31 DEBUG: showing new popup for current screen
-2025-11-24 09:12:31 DEBUG: menu_shown set True
-2025-11-24 09:12:40 DEBUG: Focusing screen 0 and group 3
-2025-11-24 09:12:40 DEBUG: _focus_group_and_screen called screen_index=0 group_name=3
-2025-11-24 09:12:40 DEBUG: menu_state cleared during group switch
-2025-11-24 09:12:40 DEBUG: recreating menu popup for new screen/group
-2025-11-24 09:12:40 DEBUG: menu_popup recreated for new screen
-2025-11-24 09:38:32 DEBUG: Focusing screen 0 and group 1
-2025-11-24 09:38:32 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
-2025-11-24 09:38:32 DEBUG: menu_state cleared during group switch
-2025-11-24 09:38:32 DEBUG: recreating menu popup for new screen/group
-2025-11-24 09:38:32 DEBUG: menu_popup recreated for new screen
-2025-11-24 11:09:37 DEBUG: Focusing screen 0 and group 2
-2025-11-24 11:09:37 DEBUG: _focus_group_and_screen called screen_index=0 group_name=2
-2025-11-24 11:09:37 DEBUG: menu_state cleared during group switch
-2025-11-24 11:09:37 DEBUG: recreating menu popup for new screen/group
-2025-11-24 11:09:37 DEBUG: menu_popup recreated for new screen
-2025-11-24 11:09:39 DEBUG: Focusing screen 0 and group 1
-2025-11-24 11:09:39 DEBUG: _focus_group_and_screen called screen_index=0 group_name=1
-2025-11-24 11:09:39 DEBUG: menu_state cleared during group switch
-2025-11-24 11:09:39 DEBUG: recreating menu popup for new screen/group
-2025-11-24 11:09:39 DEBUG: menu_popup recreated for new screen
+[2025-11-25 10:50:07] INFO: log initialized.
+[2025-11-25 10:50:07] DEBUG: Detected 1 monitors: [{'id': '1', 'width': 1920, 'height': 1080}]
+[2025-11-25 10:50:07] DEBUG: Pywal colors loaded from colors.json successfully.
+[2025-11-25 10:50:07] DEBUG: Layouts configured: ['Columns', 'Max', 'Matrix', 'Zoomy']
+[2025-11-25 10:50:07] DEBUG: Screen 0 configured with groups: ['1', '2', '3', '4', '5', '6']
+[2025-11-25 10:50:07] INFO: Qtile configuration starting
+[2025-11-25 10:50:07] INFO: Utility modules loaded successfully.
+[2025-11-25 10:50:07] INFO: Groups module loaded successfully.
+[2025-11-25 10:50:07] INFO: Keybindings module loaded successfully.
+[2025-11-25 10:50:07] INFO: Layouts module loaded successfully.
+[2025-11-25 10:50:07] INFO: Screens module loaded successfully.
+[2025-11-25 10:50:07] INFO: Qtile loaded, running startup hooks.
+[2025-11-25 10:50:07] INFO: Qtile configuration completed successfully.
+[2025-11-25 10:50:12] DEBUG: Focusing screen 0 and group 1
+[2025-11-25 10:50:14] DEBUG: Focusing screen 0 and group 2
+[2025-11-25 10:50:14] DEBUG: Focusing screen 0 and group 1
+[2025-11-25 10:50:15] DEBUG: Focusing screen 0 and group 2
+[2025-11-25 10:50:15] DEBUG: Focusing screen 0 and group 1
+[2025-11-25 10:50:16] DEBUG: Focusing screen 0 and group 2
+[2025-11-25 10:50:16] DEBUG: Focusing screen 0 and group 3
+[2025-11-25 10:50:17] DEBUG: Focusing screen 0 and group 4
+[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 1
+[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 2
+[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 3
+[2025-11-25 10:50:19] DEBUG: Focusing screen 0 and group 4
+[2025-11-25 10:50:20] DEBUG: Focusing screen 0 and group 1
+[2025-11-25 10:50:27] DEBUG: Focusing screen 0 and group 2
+[2025-11-25 10:50:28] DEBUG: Focusing screen 0 and group 3
+[2025-11-25 10:50:28] DEBUG: Focusing screen 0 and group 4
+[2025-11-25 10:50:29] DEBUG: Focusing screen 0 and group 2
