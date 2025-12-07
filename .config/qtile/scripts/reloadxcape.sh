@@ -3,7 +3,10 @@
 if pgrep -x "xcape" > /dev/null
 then
     # if xcape is running, kill it
-    pkill xcape
+    pkill -x xcape
 fi
 setxkbmap -option # Reset any conflicting options
-xcape -e 'Super_L=XF86MyComputer'
+
+xmodmap -pke | grep -q 'F13' || xmodmap -e 'keycode 255 = F13'
+
+xcape -t 200 -e 'Super_L=F13'

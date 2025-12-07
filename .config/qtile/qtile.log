@@ -1,30 +1,17 @@
-[2025-11-25 10:50:07] INFO: log initialized.
-[2025-11-25 10:50:07] DEBUG: Detected 1 monitors: [{'id': '1', 'width': 1920, 'height': 1080}]
-[2025-11-25 10:50:07] DEBUG: Pywal colors loaded from colors.json successfully.
-[2025-11-25 10:50:07] DEBUG: Layouts configured: ['Columns', 'Max', 'Matrix', 'Zoomy']
-[2025-11-25 10:50:07] DEBUG: Screen 0 configured with groups: ['1', '2', '3', '4', '5', '6']
-[2025-11-25 10:50:07] INFO: Qtile configuration starting
-[2025-11-25 10:50:07] INFO: Utility modules loaded successfully.
-[2025-11-25 10:50:07] INFO: Groups module loaded successfully.
-[2025-11-25 10:50:07] INFO: Keybindings module loaded successfully.
-[2025-11-25 10:50:07] INFO: Layouts module loaded successfully.
-[2025-11-25 10:50:07] INFO: Screens module loaded successfully.
-[2025-11-25 10:50:07] INFO: Qtile loaded, running startup hooks.
-[2025-11-25 10:50:07] INFO: Qtile configuration completed successfully.
-[2025-11-25 10:50:12] DEBUG: Focusing screen 0 and group 1
-[2025-11-25 10:50:14] DEBUG: Focusing screen 0 and group 2
-[2025-11-25 10:50:14] DEBUG: Focusing screen 0 and group 1
-[2025-11-25 10:50:15] DEBUG: Focusing screen 0 and group 2
-[2025-11-25 10:50:15] DEBUG: Focusing screen 0 and group 1
-[2025-11-25 10:50:16] DEBUG: Focusing screen 0 and group 2
-[2025-11-25 10:50:16] DEBUG: Focusing screen 0 and group 3
-[2025-11-25 10:50:17] DEBUG: Focusing screen 0 and group 4
-[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 1
-[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 2
-[2025-11-25 10:50:18] DEBUG: Focusing screen 0 and group 3
-[2025-11-25 10:50:19] DEBUG: Focusing screen 0 and group 4
-[2025-11-25 10:50:20] DEBUG: Focusing screen 0 and group 1
-[2025-11-25 10:50:27] DEBUG: Focusing screen 0 and group 2
-[2025-11-25 10:50:28] DEBUG: Focusing screen 0 and group 3
-[2025-11-25 10:50:28] DEBUG: Focusing screen 0 and group 4
-[2025-11-25 10:50:29] DEBUG: Focusing screen 0 and group 2
+[2025-12-07 10:48:13] INFO: log initialized.
+[2025-12-07 10:48:13] DEBUG: Detected 1 monitors: [{'id': '1', 'width': 1920, 'height': 1080}]
+[2025-12-07 10:48:13] DEBUG: Pywal colors loaded from colors.json successfully.
+[2025-12-07 10:48:13] INFO: Colors reloaded from pywal.
+[2025-12-07 10:48:13] DEBUG: Layouts configured: ['Columns', 'Max', 'Matrix', 'Zoomy']
+[2025-12-07 10:48:13] DEBUG: Screen 0 configured with groups: ['1', '2', '3', '4', '5', '6']
+[2025-12-07 10:48:13] INFO: Qtile configuration starting
+[2025-12-07 10:48:13] INFO: Utility modules loaded successfully.
+[2025-12-07 10:48:13] INFO: Groups module loaded successfully.
+[2025-12-07 10:48:13] INFO: Keybindings module loaded successfully.
+[2025-12-07 10:48:13] INFO: Layouts module loaded successfully.
+[2025-12-07 10:48:13] INFO: Screens module loaded successfully.
+[2025-12-07 10:48:13] INFO: Qtile loaded, running startup hooks.
+[2025-12-07 10:48:13] INFO: Qtile configuration completed successfully.
+[2025-12-07 10:48:13] DEBUG: Pywal colors loaded from colors.json successfully.
+[2025-12-07 10:48:13] INFO: Colors reloaded from pywal.
+[2025-12-07 10:48:13] INFO: Pywal colors reloaded on startup.

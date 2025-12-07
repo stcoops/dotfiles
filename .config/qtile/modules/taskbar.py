@@ -37,7 +37,7 @@ class Taskbar():
                        size = taskbar_height,
                        margin = taskbar_margin,
                        background = "#00000000",
-                       opacity = 0.6,
+                       opacity = 0.45,
                        )
 
 

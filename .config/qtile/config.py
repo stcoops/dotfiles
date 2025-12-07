@@ -1,6 +1,6 @@
 """# Qtile configuration file - config.py"""
 
-from libqtile import hook
+from libqtile import hook, qtile
 from libqtile.lazy import lazy
 
 from utils.dotlogs import log # Logger instance for logging
@@ -68,5 +68,13 @@ from modules.popups.qtile_control import Qstartup
 @hook.subscribe.startup_once
 def start_once():
     lazy.function(Qstartup)
+
+@hook.subscribe.startup
+def start():
+    from utils.colors import refresh_colors
+    refresh_colors()
+    log.info("Pywal colors reloaded on startup.")
+
+
 
 log.info("Qtile configuration completed successfully.")

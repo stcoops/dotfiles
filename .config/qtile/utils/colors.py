@@ -75,9 +75,13 @@ def load_pywal_colors_py():
 
         return default_colors
 
-colors = load_pywal_colors_py()
+def refresh_colors():
+    """Reload colors from pywal's colors.py file."""
+    global colors
+    colors = load_pywal_colors_py()
+    log.info("Colors reloaded from pywal.")
 
-
+refresh_colors()
 
 
 

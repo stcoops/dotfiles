@@ -13,4 +13,5 @@ PS1='[\u@\h \W]\$ '
 source ~/.cache/wal/colors-tty.sh
 
 figlet $HOSTNAME
- 
+dt=$(date '+%d/%m/%Y %H:%M:%S');
+echo "$dt"

@@ -32,6 +32,7 @@ class KeyBindings:
         self._base_keys()
         self._multi_media_keys()
         self._add_group_keys()
+        #self._toggle_bar()
 
 
         if len(monitors) > 1:
@@ -42,7 +43,7 @@ class KeyBindings:
         if editor:
             self.editor = editor
             self._file_editor()
-        
+                    
 
     def _base_keys(self):
         self.keys.extend([
@@ -87,13 +88,11 @@ class KeyBindings:
     def _add_group_keys(self):
         self.keys.extend(group_keys)
 
-    menu = """
-    def _menu_key(self):
-        self.menu_state = MenuState()
+    def _toggle_bar(self):
         self.keys.append(
-            Key([], "XF86MyComputer", lazy.function(self.menu_state.toggle_menu), desc="Toggle menu popup"),
+            Key([self.mod], "q", lazy.show_hide_bar(), desc="Toggle taskbar visibility"),
             )
-    """
+        
     def _multi_screen_keys(self, screen_count):
         for i in range(screen_count):
             self.keys.extend([

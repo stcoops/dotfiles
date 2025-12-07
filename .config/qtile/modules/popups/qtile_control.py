@@ -7,6 +7,7 @@ from utils.dotlogs import log
 
 from defaults import wallpaper
 from utils.structure import WALLPAPERS_DIR
+from utils.colors import refresh_colors
 
 
 class QtileController:
@@ -96,7 +97,7 @@ class QtileController:
             result_timeout=3
         )
 
-        
+        refresh_colors()
 
         self._run_and_notify(
             qtile,

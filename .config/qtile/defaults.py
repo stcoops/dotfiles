@@ -4,8 +4,8 @@ mod = "mod4"
 
 group_names = [["1", "2", "3", "4", "5", "6"]]
 
-wallpaper = "brutal.jpg"  # set to "" for no wallpaper
-
+#2wallpaper = "brutal.jpg"  # set to "" for no wallpaper
+wallpaper = "brutal.jpg" 
 browser = "brave"
 
 terminal = "kitty"
